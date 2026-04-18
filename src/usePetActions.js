@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 
-export function usePetActions() {
+export function usePetActions(petName = "Tamagotchi") {
   const tickRate = 100 // In ms
   const maxYears = 5 // In years, pet dies after this age
   const maxAge = (tickRate * 60 * 60 * 24 * 30 * 12) * maxYears
 
-  const [pet, setPet] = useState({
-    name: "Tamagotchi",
+  const startingStats = {
+    name: petName,
     hunger: 100,
     happiness: 100,
     energy: 100,
@@ -14,9 +14,14 @@ export function usePetActions() {
     cleanliness: 100,
     stage: "baby",
     age: 0
-  })
+  }
 
+  const [pet, setPet] = useState({ ...startingStats })
   const [isAlive, setIsAlive] = useState(true)
+
+  useEffect(() => {
+    setPet(prev => ({ ...prev, name: petName }))
+  }, [petName])
 
   // Helper: Check if pet should die
   const checkIfDead = (petStats) => {
@@ -126,6 +131,11 @@ export function usePetActions() {
     }))
   }
 
+  const resetGame = () => {
+    setPet({ ...startingStats })
+    setIsAlive(true)
+  }
+
   return {
     pet,
     isAlive,
@@ -133,6 +143,7 @@ export function usePetActions() {
     feed,
     play,
     sleep,
-    clean
+    clean,
+    resetGame
   }
 }
