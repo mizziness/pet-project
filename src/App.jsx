@@ -2,6 +2,7 @@ import './App.css'
 import { useState, useEffect } from 'react'
 import { usePetActions } from './usePetActions'
 import { Pet } from './components/Pet'
+import { DebugPanel } from './components/DebugPanel'
 import { StatusBars } from './components/StatusBars'
 import { ActionButtons } from './components/ActionButtons'
 import { GameOver } from './components/GameOver'
@@ -9,14 +10,16 @@ import { EggSelection } from './components/EggSelection'
 
 function App() {
   const [petName, setPetName] = useState('Tama')
-  const { pet, isAlive, stage, feed, play, sleep, clean, formatAge, resetGame } = usePetActions(petName)
   const [screen, setScreen] = useState('eggSelection') // 'eggSelection' | 'playing' | 'gameOver'
-
+  const gameActive = screen === 'playing'
+  const { pet, isAlive, stage, feed, play, sleep, clean, formatAge, resetGame } = usePetActions(petName, gameActive)
   const handleReset = () => { resetGame(); setScreen('eggSelection') }
 
+  const showDebugPanel = import.meta.env.DEV
+
   useEffect(() => {
-    if (!isAlive) setScreen('gameOver')
-  }, [isAlive])
+    if (screen === "playing" && !isAlive) setScreen('gameOver')
+  }, [screen, isAlive])
 
   return (
     <div className='container mx-auto'>
@@ -39,6 +42,16 @@ function App() {
       ) : screen === 'gameOver' ? (
         <GameOver pet={pet} isAlive={isAlive} formatAge={formatAge} resetGame={handleReset} />
       ) : null }
+
+      {showDebugPanel && (
+        <DebugPanel
+          pet={pet}
+          screen={screen}
+          gameActive={gameActive}
+          isAlive={isAlive}
+        />
+      )}
+
     </div>
   )
 }

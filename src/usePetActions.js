@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export function usePetActions(petName = "Tamagotchi") {
+export function usePetActions(petName = "Tamagotchi", gameActive = false) {
   const tickRate = 100 // In ms
   const maxYears = 5 // In years, pet dies after this age
   const maxAge = (tickRate * 60 * 60 * 24 * 30 * 12) * maxYears
@@ -66,7 +66,7 @@ export function usePetActions(petName = "Tamagotchi") {
 
   // Game tick
   useEffect(() => {
-    if (!isAlive) return
+    if (!gameActive || !isAlive) return
 
     const interval = setInterval(() => {
       setPet(prevPet => {
@@ -82,17 +82,17 @@ export function usePetActions(petName = "Tamagotchi") {
         if (checkIfDead(newPet)) {
           setIsAlive(false)
         }
-        
+
         return newPet
       })
     }, tickRate)
 
     return () => clearInterval(interval)
-  }, [isAlive])
+  }, [isAlive, gameActive])
 
   // Action: Feed the pet
   const feed = () => {
-    if (!isAlive) return
+    if (!gameActive || !isAlive) return
     setPet(prev => ({
       ...prev,
       hunger: Math.min(100, prev.hunger + 30),
@@ -102,7 +102,7 @@ export function usePetActions(petName = "Tamagotchi") {
 
   // Action: Play with pet
   const play = () => {
-    if (!isAlive) return
+    if (!gameActive || !isAlive) return
     setPet(prev => ({
       ...prev,
       happiness: Math.min(100, prev.happiness + 25),
@@ -113,7 +113,7 @@ export function usePetActions(petName = "Tamagotchi") {
 
   // Action: Let pet sleep
   const sleep = () => {
-    if (!isAlive) return
+    if (!gameActive || !isAlive) return
     setPet(prev => ({
       ...prev,
       energy: Math.min(100, prev.energy + 50),
@@ -123,7 +123,7 @@ export function usePetActions(petName = "Tamagotchi") {
 
   // Action: Clean the pet
   const clean = () => {
-    if (!isAlive) return
+    if (!gameActive || !isAlive) return
     setPet(prev => ({
       ...prev,
       cleanliness: Math.min(100, prev.cleanliness + 40),

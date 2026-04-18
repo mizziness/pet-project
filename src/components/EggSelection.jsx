@@ -8,7 +8,7 @@ export function EggSelection({ selectEgg }) {
     ]
 
     return (
-        <div className="flex flex-col gap-4 align-center justify-center min-h-screen p-4">
+        <div className="p-4 mt-8">
 
             <form className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto" onSubmit={(e) => {
                 e.preventDefault()
