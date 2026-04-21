@@ -1,5 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+
 import { usePetActions } from './usePetActions'
 import { Pet } from './components/Pet'
 import { DebugPanel } from './components/DebugPanel'
@@ -7,7 +9,11 @@ import { StatusBars } from './components/StatusBars'
 import { ActionButtons } from './components/ActionButtons'
 import { GameOver } from './components/GameOver'
 import { EggSelection } from './components/EggSelection'
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Nav } from './components/Nav'
+import { Register } from './pages/Register'
+import { Account } from './pages/Account'
+import { AppRoutes } from './routes/AppRoutes'
+
 
 function App() {
   const [petName, setPetName] = useState('Tama')
@@ -25,36 +31,36 @@ function App() {
   }, [isAlive, location.pathname, navigate])
 
   return (
-    <div className='container mx-auto'>
-      <Routes>
-        <Route path="/" element={<EggSelection selectEgg={(eggId, petName) => {
-          setPetName(petName)
-          navigate('/play', { replace: true })
-        }} />} />
-        <Route path="/play" element={
-          <div className="min-h-screen flex flex-col items-center justify-center p-4">
-            <h1 className="text-4xl font-bold mb-8">Virtual Pet</h1>
-            <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-              <Pet pet={pet} isAlive={isAlive} />
-              <StatusBars pet={pet} />
-              <ActionButtons feed={feed} play={play} sleep={sleep} clean={clean} isAlive={isAlive} />
-              <p className="text-xs text-gray-400 mt-4 break-all mt-2">{JSON.stringify(pet)}</p>
-            </div>
-          </div>
-        } />
-        <Route path="/game-over" element={<GameOver pet={pet} isAlive={isAlive} formatAge={formatAge} resetGame={handleReset} />} />
-      </Routes>
-
-      {showDebugPanel && (
-        <DebugPanel
-          route={location.pathname}
+    <main>
+      <div id="top-nav" className="fixed left-0 top-0 z-10 w-full">
+        <Nav />
+      </div>
+      <div className='container mx-auto'>
+        <AppRoutes
           pet={pet}
-          gameActive={gameActive}
           isAlive={isAlive}
+          feed={feed}
+          play={play}
+          sleep={sleep}
+          clean={clean}
+          formatAge={formatAge}
+          onSelectEgg={(eggId, petName) => {
+            setPetName(petName)
+            navigate(PATHS.PLAY, { replace: true })
+          }}
+          onReset={handleReset}
         />
-      )}
 
-    </div>
+        {showDebugPanel && (
+          <DebugPanel
+            route={location.pathname}
+            pet={pet}
+            gameActive={gameActive}
+            isAlive={isAlive}
+          />
+        )}
+      </div>
+    </main>
   )
 }
 
