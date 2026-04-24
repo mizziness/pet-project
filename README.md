@@ -4,35 +4,39 @@
 [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=FFD62E)](https://vite.dev/)
 [![React Router](https://img.shields.io/badge/React_Router-7-CA4245?logo=reactrouter&logoColor=white)](https://reactrouter.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![React Spring](https://img.shields.io/badge/React_Spring-Animation-6DB33F)](https://www.react-spring.dev/)
 [![Zustand](https://img.shields.io/badge/Zustand-State_Store-7C5CFC)](https://zustand-demo.pmnd.rs/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-A Tamagotchi-style virtual pet game built with React, Vite, and React Router.
+A Tamagotchi-style virtual pet browser-based game built with React, Vite, and React Router.
 
-TamaGatcha is a local-first virtual pet game where players hatch, care for, and eventually lose pets over time. The current build focuses on the core gameplay loop, route structure, and early auth foundations for future progression systems.
+TamaGatcha is a local-first virtual pet game where players hatch, care for, and eventually lose pets over time. Data is currently persisted in localStorage (accounts, active session, pets, and active pet).
 
 ## Preview
 
-> TODO: Will add a screenshot or GIF here once the UI is stable.
+> TODO: Add a screenshot or short GIF.
 
 ## Features
 
-- Hatch a pet from an egg selection screen
+- Hatch a pet from a randomized egg selection screen
 - Track live pet stats:
   - Hunger
   - Happiness
   - Energy
   - Health
   - Cleanliness
+  - Age and life stage
 - Perform care actions:
   - Feed
   - Play
   - Sleep
   - Clean
 - Automatic stat decay over time
-- Game over flow with restart
+- Egg animation system (idle wiggle, hover bounce, reroll fade transitions)
+- Per-user pet persistence in localStorage
+- Game-over flow with restart from hatchery
 - Route-based navigation with React Router
-- Local auth foundation using Zustand
+- Local auth with Zustand (register/login)
 
 ## Tech Stack
 
@@ -40,15 +44,18 @@ TamaGatcha is a local-first virtual pet game where players hatch, care for, and 
 - Vite
 - React Router
 - Tailwind CSS
+- React Spring
 - Zustand
 
 ## Routes
 
-- `/` — Home / egg selection
+- `/` — Home
+- `/hatchery` — Egg selection and naming
 - `/play` — Active pet gameplay
 - `/game-over` — Game over summary
-- `/register` — Registration page
+- `/register` — Login/register page
 - `/account` — Account page
+- `/collection` — Collection page
 
 ## Getting Started
 
@@ -65,23 +72,33 @@ src/
   pages/        Route-level page components
   routes/       Route definitions and path constants
   store/        Zustand stores
+  useAccountActions.js
   usePetActions.js
 ```
 
 ## Current Status
 
-The current app supports the core single-pet gameplay loop and early account/routing work. It is still in active development and some route-level pages are placeholders while broader progression systems are being designed.
+The current app supports:
+
+- Core pet loop (actions, stat decay, death checks)
+- Persistent active pet updates while navigating routes
+- Egg hatch flow with reroll UX and rarity labeling
+- Local auth/session handling
+
+In progress:
+
+- Account and collection UX polish
+- Graveyard view for deceased pets
 
 ## Roadmap
 
-MVP+
+Near-term
 
-- Auth-aware home experience
-- Hatchery page
-- Collection page for active pets
-- Graveyard page for deceased pets
-- Store page for food, toys, and decorations
-- Expanded account page
+- Inline validation feedback (replace alert-based errors)
+- Account page improvements (logout, active pet summary)
+- Collection + graveyard polish
+- Better route guards and auth gating
+- Automated tests (unit + integration smoke coverage)
 
 Future
 
@@ -93,6 +110,6 @@ Future
 
 Notes
 
-- Current auth is local-only
-- Current persistence is local-first
-- Backend architecture is planned, but not finalized
+- Auth is local-only for now
+- Persistence is local-first (localStorage)
+- Backend architecture is planned but not finalized
