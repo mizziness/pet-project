@@ -90,9 +90,21 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Sour Gummy", sans-serif;
 }
 
+#custom-container {
+  box-shadow: 
+    inset 0 -7px 3px 1px rgba(0,0,0,0.1), 
+    inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+button:hover {
+  cursor: pointer;
+}
+
 .page-heading {
   @apply rounded-2xl rounded-b-none bg-pink-300 px-4 py-3 text-2xl font-bold text-gray-700;
-  box-shadow: inset 0 3px 6px 6px rgba(255,255,255,0.5);
+  /* box-shadow: inset 0 3px 6px 6px rgba(255,255,255,0.5); */
+  box-shadow: 
+    inset 0 2px 4px rgba(76, 5, 25, 0.5);
 }
 
 .gray-button {
@@ -115,7 +127,18 @@ h1, h2, h3, h4, h5, h6 {
   @apply w-full rounded-3xl rounded-r-none p-2 text-center text-gray-700;
 }
 
+.content-box {
+  @apply flex flex-col items-center py-12;
+  
+}
+
 #egg-selection png,
 #egg-selection svg {
   height: 82px;
+}
+
+#egg-selection > label {
+  outline-width: 0px;
+  outline-color: transparent;
+  outline-style: hidden;
 }

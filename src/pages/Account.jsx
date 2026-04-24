@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 
 export function Account() {
@@ -6,8 +5,6 @@ export function Account() {
   // TODO: set up state for username and mode
 
   const { isLoggedIn, user } = useAuthStore();
-  const gray_gradient_button_classes =
-    "grid grid-cols-[1fr_2fr] gap-x-4 border-minsk-500 rounded-full px-6 py-4 rounded border bg-gray-100 px-4 py-2 text-black transition duration-300 ease-in-out hover:bg-gray-200";
   const input_field_classes =
     "text-minsk-700 rounded-l-none border-white rounded-3xl border bg-white p-2 text-center";
   const label_field_classes =
@@ -18,7 +15,6 @@ export function Account() {
       id="custom-container"
       className="mt-30 mx-auto w-full max-w-4xl rounded-2xl bg-white text-center shadow-lg"
     >
-
       {!isLoggedIn && (
         <p className="text-xl">You must be logged in to view this page.</p>
       )}
@@ -29,7 +25,7 @@ export function Account() {
             Welcome to your account page!
           </h1>
 
-          <div className="py-12">
+          <div className="content-box flex flex-col items-center py-12">
             <div className="inline-grid w-auto gap-y-4 text-left">
               <div className="gray-button">
                 <div className={label_field_classes}>Username:</div>

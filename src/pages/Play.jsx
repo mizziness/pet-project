@@ -1,32 +1,31 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { usePetActions, formatAge } from '../usePetActions'
-import { usePetStore } from '../store/petStore'
-import { Pet } from '../components/Pet'
-import { StatusBars } from '../components/StatusBars'
-import { ActionButtons } from '../components/ActionButtons'
-import { PATHS } from '../routes/AppRoutes'
+import { ActionButtons } from "../components/ActionButtons";
+import { formatAge } from "../usePetActions";
+import { PATHS } from "../routes/paths";
+import { Pet } from "../components/Pet";
+import { StatusBars } from "../components/StatusBars";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePetStore } from "../store/petStore";
 
-export function Play() {
-  const navigate = useNavigate()
-  const { pet, isAlive, feed, play, sleep, clean } = usePetActions(true)
+export function Play({ pet, isAlive, feed, play, sleep, clean }) {
+  const navigate = useNavigate();
 
   // No active pet in store? Send them to the hatchery
   useEffect(() => {
     if (!usePetStore.getState().getActivePet()) {
-      navigate(PATHS.HATCH, { replace: true })
+      navigate(PATHS.HATCH, { replace: true });
     }
-  }, [])
+  }, [navigate]);
 
   // Pet died — carry its info to GameOver via navigation state
   useEffect(() => {
     if (!isAlive) {
       navigate(PATHS.GAME_OVER, {
         replace: true,
-        state: { petName: pet.name, petAge: formatAge(pet.age) }
-      })
+        state: { petName: pet.name, petAge: formatAge(pet.age) },
+      });
     }
-  }, [isAlive, navigate])
+  }, [isAlive, navigate, pet]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -34,8 +33,14 @@ export function Play() {
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
         <Pet pet={pet} isAlive={isAlive} />
         <StatusBars pet={pet} />
-        <ActionButtons feed={feed} play={play} sleep={sleep} clean={clean} isAlive={isAlive} />
+        <ActionButtons
+          feed={feed}
+          play={play}
+          sleep={sleep}
+          clean={clean}
+          isAlive={isAlive}
+        />
       </div>
     </div>
-  )
+  );
 }

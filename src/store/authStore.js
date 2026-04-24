@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 
 export const useAuthStore = create((set) => {
-  const accounts = JSON.parse(localStorage.getItem('tamagacha_accounts')) || []
   const session = JSON.parse(localStorage.getItem('tamagacha_session')) || null
 
   return {
