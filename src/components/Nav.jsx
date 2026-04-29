@@ -1,18 +1,29 @@
 import { useAuthStore } from "../store/authStore";
+import { usePetStore } from "../store/petStore";
 import { Link } from "react-router-dom";
 
 export function Nav() {
   const { user, isLoggedIn, logout } = useAuthStore();
+  const { activePetId } = usePetStore();
+
+  const activePet = usePetStore().pets.find(p => p.id === activePetId) ?? null
 
   return (
     <nav className="bg-minsk-950 flex items-center justify-between p-4 text-white">
-      <ul className="flex w-full items-end justify-end gap-4 px-4 text-right">
+      <ul className="flex w-full items-end justify-start gap-4 px-4 text-left">
         {isLoggedIn && (
           <li>
             <span className="mr-2">Hello, {user.username}!</span>
           </li>
         )}
 
+        {isLoggedIn && activePet && (
+          <li>
+            <Link to="/play" className="mr-2">Active Pet: {activePet.name}</Link>
+          </li>
+        )}
+      </ul>
+      <ul className="flex w-full items-end justify-end gap-4 px-4 text-right">
         <li>
           <Link to="/" className="hover:text-minsk-300">
             Home

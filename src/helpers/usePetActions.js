@@ -3,6 +3,17 @@ import { usePetStore } from '../store/petStore'
 import { useAuthStore } from '../store/authStore'
 import * as GameConfig from '../../gameConfig.js'
 
+const DEFAULT_PET = Object.freeze({
+  name: 'Tama',
+  hunger: 100,
+  happiness: 100,
+  energy: 100,
+  health: 100,
+  cleanliness: 100,
+  stage: 'baby',
+  age: 0
+})
+
 // Exported standalone so other components can use it without running the hook 
 // ================================
 export function formatAge(ageInTicks, speed = 1) {
@@ -35,7 +46,7 @@ export function usePetActions(gameActive = false, speed = 1) {
 
   const initialStats = activePet
     ? { ...activePet.stats, name: activePet.name }
-    : { name: 'Tama', hunger: 100, happiness: 100, energy: 100, health: 100, cleanliness: 100, stage: 'baby', age: 0 }
+    : DEFAULT_PET
 
   const [pet, setPet] = useState(initialStats)
   
@@ -56,6 +67,31 @@ export function usePetActions(gameActive = false, speed = 1) {
     health:       (GameConfig.DAILY_DECAY_TOTAL.health / ticksPerPetDay) * GameConfig.DECAY_MULTIPLIER,
     cleanliness:  (GameConfig.DAILY_DECAY_TOTAL.cleanliness / ticksPerPetDay) * GameConfig.DECAY_MULTIPLIER
   }), [ticksPerPetDay])
+
+  // Keep local hook state aligned when the active pet changes (e.g. right after hatch).
+  useEffect(() => {
+    let cancelled = false
+
+    if (!activePet) {
+      deathHandledRef.current = false
+      lastProcessedAtRef.current = Date.now()
+      lastAutosavedAgeRef.current = -1
+      queueMicrotask(() => {
+        if (!cancelled) setPet(DEFAULT_PET)
+      })
+      return () => { cancelled = true }
+    }
+
+    deathHandledRef.current = !activePet.isAlive
+    lastAutosavedAgeRef.current = activePet.stats?.age ?? -1
+    const saved = Number(activePet.lastTick)
+    lastProcessedAtRef.current = saved > 0 ? saved : Date.now()
+    queueMicrotask(() => {
+      if (!cancelled) setPet({ ...activePet.stats, name: activePet.name })
+    })
+
+    return () => { cancelled = true }
+  }, [activePetId, activePet])
 
   // initialize wall-clock cursor after render
   useEffect(() => {
