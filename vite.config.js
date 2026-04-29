@@ -5,11 +5,15 @@ import ReactSVG from 'react-svg'
 
 // https://vite.dev/config/
 export default defineConfig({
+  baseUrl: '.',
+  paths: {
+    '@/*': ['./*']
+  },
   plugins: [
     react(),
     tailwindcss()
   ],
   server: {
     allowedHosts: ['localhost', '127.0.0.1', '::1', '0460-70-20-17-224.ngrok-free.app']
-  }
+  },
 })

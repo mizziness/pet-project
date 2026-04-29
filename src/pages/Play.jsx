@@ -1,5 +1,6 @@
 import { ActionButtons } from "../components/ActionButtons";
-import { formatAge } from "../usePetActions";
+import { formatAge } from "../helpers/usePetActions";
+import { EventLog } from "../components/EventLog";
 import { PATHS } from "../routes/paths";
 import { Pet } from "../components/Pet";
 import { StatusBars } from "../components/StatusBars";
@@ -9,6 +10,12 @@ import { usePetStore } from "../store/petStore";
 
 export function Play({ pet, isAlive, feed, play, sleep, clean }) {
   const navigate = useNavigate();
+  const activePet = usePetStore((state) =>
+    state.pets.find((p) => p.id === state.activePetId) || null
+  )
+  const session = JSON.parse(localStorage.getItem("tamagacha_session")) || null
+  const owner = session?.username ?? activePet?.owner ?? null
+  const petId = activePet?.id ?? null
 
   // No active pet in store? Send them to the hatchery
   useEffect(() => {
@@ -28,19 +35,25 @@ export function Play({ pet, isAlive, feed, play, sleep, clean }) {
   }, [isAlive, navigate, pet]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <h1 className="mb-8 text-4xl font-bold">Virtual Pet</h1>
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <Pet pet={pet} isAlive={isAlive} />
-        <StatusBars pet={pet} />
-        <ActionButtons
-          feed={feed}
-          play={play}
-          sleep={sleep}
-          clean={clean}
-          isAlive={isAlive}
-        />
+    
+      <div className="flex flex-col items-center justify-center p-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+            <Pet pet={pet} isAlive={isAlive} />
+            <StatusBars pet={pet} />
+            <ActionButtons
+              feed={feed}
+              play={play}
+              sleep={sleep}
+              clean={clean}
+              isAlive={isAlive}
+            />
+          </div>
+          <div className="my-6 w-full max-w-md rounded-lg bg-white p-4 shadow-lg">
+            <EventLog username={owner} petId={petId} />
+          </div>
+        </div>
       </div>
-    </div>
+  
   );
 }

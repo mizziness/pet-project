@@ -5,18 +5,18 @@ import { Nav } from "./components/Nav";
 import { PATHS } from "./routes/paths";
 import { useAuthStore } from "./store/authStore";
 import { useNavigate, useLocation } from "react-router-dom";
-import { usePetActions } from "./usePetActions";
+import { usePetActions } from "./helpers/usePetActions";
 import { usePetStore } from "./store/petStore";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { createPet, activePetId } = usePetStore();
+  const { createPet, activePetId, speed } = usePetStore();
   const showDebugPanel = import.meta.env.DEV;
 
   // Run the game loop at the app level so it survives page navigation
-  const gameProps = usePetActions(!!activePetId);
+  const gameProps = usePetActions(activePetId !== null, speed);
 
   const handleSelectEgg = (petName, egg) => {
     if (user) createPet(user.username, petName, egg);
@@ -24,7 +24,7 @@ function App() {
   };
 
   return (
-    <main>
+    <main className="pt-22">
       <div id="top-nav" className="fixed left-0 top-0 z-10 w-full">
         <Nav />
       </div>

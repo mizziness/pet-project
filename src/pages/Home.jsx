@@ -1,6 +1,6 @@
 import { useAuthStore } from "../store/authStore";
 import { usePetStore } from "../store/petStore";
-import { formatAge } from "../usePetActions";
+import { formatAge } from "../helpers/usePetActions";
 
 export function Home() {
   const { user, isLoggedIn } = useAuthStore();

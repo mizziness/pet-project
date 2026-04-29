@@ -1,4 +1,4 @@
-import { formatAge } from "../usePetActions";
+import { formatAge } from "../helpers/usePetActions";
 
 const scale = 1 + Math.sin(Math.random() * 500) * 0.05;
 
@@ -34,7 +34,7 @@ export function Pet({ pet, isAlive }) {
       </div>
       <div className="text-xl font-semibold">{pet.name}</div>
       <div className="text-sm text-gray-600">
-        Age: {formatAge(pet.age)} | Stage: {pet.stage} | Mood: {getMood()}
+        Age: {formatAge(pet.age)}<br />Stage: {pet.stage} | Mood: {getMood()}
       </div>
     </div>
   );

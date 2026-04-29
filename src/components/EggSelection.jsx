@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ReactSVG } from "react-svg";
 import { animated as Animated, useSpring } from "@react-spring/web";
-import { buildEggSet, eggParams } from "./eggSelection.utils";
+import { buildEggSet, eggParams } from "../helpers/eggSelection.utils";
 
 const getRandomRestMs = () => 3000 + Math.random() * 6000;
 const getRandomWiggleStepDurationMs = () => 70 + Math.random() * 50;
@@ -216,7 +216,7 @@ export function EggSelection({ selectEgg }) {
       className="mt-30 mx-auto w-full max-w-4xl rounded-2xl bg-white text-center shadow-lg"
     >
       <form
-        className="mx-auto max-w-lg bg-white p-8"
+        className="mx-auto max-w-lg p-8"
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
