@@ -1,7 +1,9 @@
+import * as GameConfig from '../../gameConfig.js'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { usePetStore } from '../store/petStore'
 import { useAuthStore } from '../store/authStore'
-import * as GameConfig from '../../gameConfig.js'
+import { getPetLifeStage, checkIfDead } from './petRules'
+import { computeElapsedTicks, initializeProcessedAt } from './gameTiming'
 
 const DEFAULT_PET = Object.freeze({
   name: 'Tama',
@@ -56,8 +58,6 @@ export function usePetActions(gameActive = false, speed = 1) {
   const autosaveEvery = GameConfig.AUTOSAVE_TICKS ?? 3
   const speedMul = GameConfig.clampSpeed(speed)
   const ticksPerPetDay = GameConfig.ticksPerPetDay(speedMul)
-  const ticksPerPetYear = GameConfig.ticksPerPetYear(speedMul)
-  const maxAge = GameConfig.maxAgeTicks(speedMul)
 
   // Pre-calculate decay per tick for each stat based on the configured daily decay totals and speed
   const decay = useMemo(() => ({
@@ -84,8 +84,7 @@ export function usePetActions(gameActive = false, speed = 1) {
 
     deathHandledRef.current = !activePet.isAlive
     lastAutosavedAgeRef.current = activePet.stats?.age ?? -1
-    const saved = Number(activePet.lastTick)
-    lastProcessedAtRef.current = saved > 0 ? saved : Date.now()
+    lastProcessedAtRef.current = initializeProcessedAt(activePet.lastTick, Date.now())
     queueMicrotask(() => {
       if (!cancelled) setPet({ ...activePet.stats, name: activePet.name })
     })
@@ -93,37 +92,20 @@ export function usePetActions(gameActive = false, speed = 1) {
     return () => { cancelled = true }
   }, [activePetId, activePet])
 
-  // initialize wall-clock cursor after render
-  useEffect(() => {
-    if (lastProcessedAtRef.current != null) return
-    const saved = Number(activePet?.lastTick)
-    lastProcessedAtRef.current = saved > 0 ? saved : Date.now()
-  }, [activePet?.lastTick])
-
   // Game tick effect - runs every TICK_MS to update pet stats and age
   useEffect(() => {
     if (!gameActive || !isAlive) return
-
-    // Calculate pet stage based on age in ticks
-    const getStage = (ageInTicks) => {
-      const years = ageInTicks / ticksPerPetYear
-      if (years < 0.5) return 'baby'
-      if (years < 2) return 'child'
-      if (years < 4) return 'adult'
-      return 'elderly'
-    }
     
     // Run the game loop at the app level so it survives page navigation
     const interval = setInterval(() => {
       setPet(prev => {
-        if (lastProcessedAtRef.current == null) {
-          lastProcessedAtRef.current = Date.now()
-          return prev
-        }
 
         const now = Date.now()
-        const elapsedMs = now - lastProcessedAtRef.current
-        const elapsedTicks = Math.floor(elapsedMs / GameConfig.TICK_MS)
+        const { elapsedTicks, nextProcessedAt } = computeElapsedTicks(
+          lastProcessedAtRef.current,
+          now,
+          GameConfig.TICK_MS
+        )
 
         if (elapsedTicks <= 0) return prev
 
@@ -134,16 +116,16 @@ export function usePetActions(gameActive = false, speed = 1) {
         next.energy = Math.max(0, next.energy - decay.energy * elapsedTicks)
         next.health = Math.max(0, next.health - decay.health * elapsedTicks)
         next.cleanliness = Math.max(0, next.cleanliness - decay.cleanliness * elapsedTicks)
-        next.stage = getStage(next.age)
+        next.stage = getPetLifeStage(next.age, speedMul)
 
         // advance by consumed ticks (keeps remainder)
-        lastProcessedAtRef.current += elapsedTicks * GameConfig.TICK_MS
+        lastProcessedAtRef.current = nextProcessedAt
 
         return next
       })
     }, GameConfig.TICK_MS)
     return () => clearInterval(interval)
-  }, [gameActive, isAlive, decay, speedMul, user, petId, activePet, ticksPerPetYear])
+  }, [gameActive, isAlive, decay, speedMul, user, petId])
 
   useEffect(() => {
     if (!gameActive || !isAlive || !user?.username || !petId) return
@@ -162,16 +144,12 @@ export function usePetActions(gameActive = false, speed = 1) {
     if (deathHandledRef.current) return
 
     const { killPet } = usePetStore.getState()
-    const checkIfDead = (p) => {
-      return [p.hunger, p.happiness, p.energy, p.health, p.cleanliness].filter(s => s <= 0).length >= 3 || p.age > maxAge
-    }
-
-    if (checkIfDead(pet)) {
+    if (checkIfDead(pet, speedMul)) {
       deathHandledRef.current = true
       killPet(user.username, petId)
     }
     
-  }, [pet, gameActive, user, maxAge, petId, activePet, speedMul])
+  }, [pet, gameActive, user, petId, speedMul])
 
   // Autosave pet stats every AUTOSAVE_TICKS ticks
   useEffect(() => {

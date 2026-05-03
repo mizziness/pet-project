@@ -15,8 +15,7 @@ export const PET_DAYS_PER_YEAR = 365
 export const RL_DAYS_PER_MAX_LIFESPAN = 20
 
 // At 1x: 91.25 pet days pass per 1 real day
-export const PET_DAYS_PER_REAL_DAY_AT_1X =
-  (MAX_AGE_YEARS * PET_DAYS_PER_YEAR) / RL_DAYS_PER_MAX_LIFESPAN
+export const PET_DAYS_PER_REAL_DAY_AT_1X = (MAX_AGE_YEARS * PET_DAYS_PER_YEAR) / RL_DAYS_PER_MAX_LIFESPAN
 
 // --- Daily decay totals (per pet day) ---
 export const DECAY_MULTIPLIER = 0.85 // <1 easier, >1 harder

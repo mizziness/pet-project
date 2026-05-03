@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ReactSVG } from "react-svg";
 import { animated as Animated, useSpring } from "@react-spring/web";
-import { buildEggSet, eggParams } from "../helpers/eggSelection.utils";
+import { buildEggSet, eggParams } from "../helpers/eggSelection";
 
 const getRandomRestMs = () => 3000 + Math.random() * 6000;
 const getRandomWiggleStepDurationMs = () => 70 + Math.random() * 50;

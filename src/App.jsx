@@ -4,6 +4,7 @@ import { DebugPanel } from "./components/DebugPanel";
 import { Nav } from "./components/Nav";
 import { PATHS } from "./routes/paths";
 import { useAuthStore } from "./store/authStore";
+import { useSettingsStore } from "./store/settingsStore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePetActions } from "./helpers/usePetActions";
 import { usePetStore } from "./store/petStore";
@@ -12,7 +13,8 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { createPet, activePetId, speed } = usePetStore();
+  const { createPet, activePetId } = usePetStore();
+  const { speed } = useSettingsStore();
   const showDebugPanel = import.meta.env.DEV;
 
   // Run the game loop at the app level so it survives page navigation

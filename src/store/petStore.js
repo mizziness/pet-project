@@ -25,7 +25,7 @@ export const usePetStore = create((set, get) => ({
 	addPetEvent: (username, petId, event) => {
 		const newEvent = { 
 			...EVENT_LOG, 
-			id: `${Date.now() + Math.random()}`, 
+			id: `${crypto.randomUUID()}`, 
 			owner: username,
 			petID: petId,
 			timestamp: Date.now(),
@@ -67,7 +67,7 @@ export const usePetStore = create((set, get) => ({
 		if (!username || !egg) return null
 
 		const newPet = {
-			id: `${Date.now()}`,
+			id: `${crypto.randomUUID()}`,
 			name,
 			owner: username,
 			egg: egg,
